@@ -2,12 +2,8 @@ name: Build
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
-  release:
-    types:
-      - published
+    tags:
+      - "v*"
   workflow_dispatch:
 
 env:
@@ -19,7 +15,9 @@ env:
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   # Set the build number in MinVer.
   MINVERBUILDMETADATA: build.${{github.run_number}}
-
+  PACKAGE_OUTPUT_DIRECTORY: ${{ github.workspace }}\output
+  PROJECT_PATH: "Source/WageCalculator/WageCalculator.csproj"
+  NUGET_SOURCE_URL: "https://api.nuget.org/v3/index.json"
 
 jobs:
   build:
@@ -79,20 +77,32 @@ jobs:
         shell: pwsh
 
   push-nuget:
-    name: "Push NuGet Packages"
+    name: "Push NuGet"
+    runs-on: "windows-latest"
     needs: build
-    environment:
-      name: "NuGet"
-      url: https://www.nuget.org/packages/WageCalculator
-    runs-on: windows-latest
+    if: github.ref == 'refs/heads/main'
     steps:
-      - name: "Download Artefact"
-        uses: actions/download-artifact@v3.0.0
+      - name: "Checkout"
+        uses: actions/checkout@v2
+
+      - name: "Install dotnet"
+        uses: actions/setup-dotnet@v1
         with:
-          name: "windows-latest"
-      - name: "Dotnet NuGet Push"
-        run: |
-          Get-ChildItem .\ -Filter *.nupkg |
-          Where-Object { !$_.Name.Contains('preview') } |
-          ForEach-Object { dotnet nuget push $_ --source https://api.nuget.org/v3/index.json --skip-duplicate --api-key ${{secrets.NUGET_API_KEY}} }
-        shell: pwsh
+          dotnet-version: "3.1.x"
+
+      - name: "Restore packages"
+        run: dotnet restore ${{ env.PROJECT_PATH }}
+
+      - name: "Build project"
+        run: dotnet build ${{ env.PROJECT_PATH }} --no-restore --configuration Release
+
+      - name: "Get Version"
+        id: version
+        uses: battila7/get-version-action@v2
+
+      - name: "Pack project"
+        run: dotnet pack ${{ env.PROJECT_PATH }} --no-restore --configuration Release --include-symbols -p:PackageVersion=${{ steps.version.outputs.version-without-v }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+
+      - name: "Push package"
+        run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}\*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s ${{ env.NUGET_SOURCE_URL }} --skip-duplicate
+
