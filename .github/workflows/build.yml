@@ -57,7 +57,6 @@ jobs:
   push-github-packages:
     name: "Push GitHub Packages"
     needs: build
-    if: github.ref == 'refs/heads/main'
     environment:
       name: "GitHub Packages"
       url: https://github.com/tramston/dotnet-wage-calculator/packages
@@ -80,7 +79,6 @@ jobs:
     name: "Push NuGet"
     runs-on: "windows-latest"
     needs: build
-    if: github.ref == 'refs/heads/main'
     steps:
       - name: "Checkout"
         uses: actions/checkout@v2
