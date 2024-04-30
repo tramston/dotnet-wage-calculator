@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Build">
+    <TargetFramework>net7.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup Label="Project References">
+    <ProjectReference Include="..\..\Source\WageCalculator\WageCalculator.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="xunit" Version="2.5.0" />
+    <PackageReference Remove="xunit.runner.visualstudio" />
+    <PackageReference Remove="Moq" />
+    <PackageReference Remove="Microsoft.VisualStudio.Threading.Analyzers" />
+  </ItemGroup>
+
+</Project>
