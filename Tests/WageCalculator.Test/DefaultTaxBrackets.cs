@@ -1,7 +1,24 @@
 namespace WageCalculator.Test;
 
-public class DefaultTaxBrackets
+/// <summary>
+/// Provides a collection of predefined tax brackets for testing or initialization purposes.
+/// </summary>
+public static class DefaultTaxBrackets
 {
+    /// <summary>
+    /// Retrieves a list of default tax brackets. This method is typically used to provide a consistent set of tax brackets for testing the WageCalculator library.
+    /// Each bracket includes a mix of primary and secondary tax rates, applicable up to specified income thresholds.
+    /// </summary>
+    /// <returns>
+    /// A List of <see cref="TaxBracket"/> objects, each configured with specific thresholds and associated tax rates.
+    /// </returns>
+    /// <example>
+    /// Here is how you might use the GetList method to initialize a wage calculator:
+    /// <code>
+    /// var taxBrackets = DefaultTaxBrackets.GetList();
+    /// var wageCalculator = new WageCalculator(taxBrackets);
+    /// </code>
+    /// </example>
     public static List<TaxBracket> GetList() => new()
     {
         new()

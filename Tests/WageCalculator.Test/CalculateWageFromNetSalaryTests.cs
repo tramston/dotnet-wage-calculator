@@ -2,8 +2,16 @@ namespace WageCalculator.Test;
 
 using Xunit;
 
+/// <summary>
+/// Contains unit tests for the CalculateFromNet method of the WageCalculator class, testing various scenarios
+/// to ensure correct calculations of gross-to-net wage conversions using different tax rates and thresholds.
+/// </summary>
 public class CalculateWageFromNetSalaryTests
 {
+    /// <summary>
+    /// Tests the calculation from a net salary of 1000 using the primary tax rate,
+    /// verifying correct net salary, contribution, and tax calculations.
+    /// </summary>
     [Fact]
     public void CalculatePaycheck_Primary1000()
     {
@@ -14,6 +22,10 @@ public class CalculateWageFromNetSalaryTests
         Assert.Equal(72.80M, calculatedSalary.Tax);
     }
 
+    /// <summary>
+    /// Tests the calculation from a net salary of 1000 using the secondary tax rate,
+    /// verifying correct net salary, contribution, and tax calculations.
+    /// </summary>
     [Fact]
     public void CalculatePaycheck_Secondary1000()
     {
@@ -24,6 +36,10 @@ public class CalculateWageFromNetSalaryTests
         Assert.Equal(95.00M, calculatedSalary.Tax);
     }
 
+    /// <summary>
+    /// Tests the calculation from a net salary of 80 using the primary tax rate,
+    /// verifying correct net salary, contribution, and tax calculations.
+    /// </summary>
     [Fact]
     public void CalculatePaycheck_Primary80()
     {
@@ -34,6 +50,10 @@ public class CalculateWageFromNetSalaryTests
         Assert.Equal(0, calculatedSalary.Tax);
     }
 
+    /// <summary>
+    /// Tests the calculation from a net salary of 80 using the secondary tax rate,
+    /// verifying correct net salary, contribution, and tax calculations.
+    /// </summary>
     [Fact]
     public void CalculatePaycheck_Secondary80()
     {
@@ -44,6 +64,10 @@ public class CalculateWageFromNetSalaryTests
         Assert.Equal(7.60M, calculatedSalary.Tax);
     }
 
+    /// <summary>
+    /// Tests the calculation from a net salary of 81 using the primary tax rate,
+    /// verifying correct net salary, contribution, and tax calculations.
+    /// </summary>
     [Fact]
     public void CalculatePaycheck_Primary81()
     {
@@ -54,6 +78,10 @@ public class CalculateWageFromNetSalaryTests
         Assert.Equal(0, calculatedSalary.Tax);
     }
 
+    /// <summary>
+    /// Tests the calculation from a net salary of 81 using the secondary tax rate,
+    /// verifying correct net salary, contribution, and tax calculations.
+    /// </summary>
     [Fact]
     public void CalculatePaycheck_Secondary81()
     {
@@ -64,6 +92,10 @@ public class CalculateWageFromNetSalaryTests
         Assert.Equal(7.69M, calculatedSalary.Tax);
     }
 
+    /// <summary>
+    /// Tests the calculation from a net salary of 250 using the primary tax rate,
+    /// verifying correct net salary, contribution, and tax calculations.
+    /// </summary>
     [Fact]
     public void CalculatePaycheck_Primary250()
     {
@@ -74,6 +106,10 @@ public class CalculateWageFromNetSalaryTests
         Assert.Equal(6.30M, calculatedSalary.Tax);
     }
 
+    /// <summary>
+    /// Tests the calculation from a net salary of 250 using the secondary tax rate,
+    /// verifying correct net salary, contribution, and tax calculations.
+    /// </summary>
     [Fact]
     public void CalculatePaycheck_Secondary250()
     {
@@ -84,6 +120,10 @@ public class CalculateWageFromNetSalaryTests
         Assert.Equal(23.75M, calculatedSalary.Tax);
     }
 
+    /// <summary>
+    /// Tests the calculation from a net salary of 251 using the primary tax rate,
+    /// verifying correct net salary, contribution, and tax calculations.
+    /// </summary>
     [Fact]
     public void CalculatePaycheck_Primary251()
     {
@@ -94,6 +134,10 @@ public class CalculateWageFromNetSalaryTests
         Assert.Equal(6.34M, calculatedSalary.Tax);
     }
 
+    /// <summary>
+    /// Tests the calculation from a net salary of 251 using the secondary tax rate,
+    /// verifying correct net salary, contribution, and tax calculations.
+    /// </summary>
     [Fact]
     public void CalculatePaycheck_Secondary251()
     {
@@ -104,6 +148,10 @@ public class CalculateWageFromNetSalaryTests
         Assert.Equal(23.84M, calculatedSalary.Tax);
     }
 
+    /// <summary>
+    /// Tests the calculation from a net salary of 450 using the primary tax rate,
+    /// verifying correct net salary, contribution, and tax calculations.
+    /// </summary>
     [Fact]
     public void CalculatePaycheck_Primary450()
     {
@@ -114,6 +162,10 @@ public class CalculateWageFromNetSalaryTests
         Assert.Equal(21.00M, calculatedSalary.Tax);
     }
 
+    /// <summary>
+    /// Tests the calculation from a net salary of 450 using the secondary tax rate,
+    /// verifying correct net salary, contribution, and tax calculations.
+    /// </summary>
     [Fact]
     public void CalculatePaycheck_Secondary450()
     {
@@ -124,6 +176,10 @@ public class CalculateWageFromNetSalaryTests
         Assert.Equal(42.75M, calculatedSalary.Tax);
     }
 
+    /// <summary>
+    /// Tests the calculation from a net salary of 451 using the primary tax rate,
+    /// verifying correct net salary, contribution, and tax calculations.
+    /// </summary>
     [Fact]
     public void CalculatePaycheck_Primary451()
     {
@@ -134,6 +190,10 @@ public class CalculateWageFromNetSalaryTests
         Assert.Equal(21.08M, calculatedSalary.Tax);
     }
 
+    /// <summary>
+    /// Tests the calculation from a net salary of 451 using the secondary tax rate,
+    /// verifying correct net salary, contribution, and tax calculations.
+    /// </summary>
     [Fact]
     public void CalculatePaycheck_Secondary451()
     {
@@ -144,6 +204,10 @@ public class CalculateWageFromNetSalaryTests
         Assert.Equal(42.84M, calculatedSalary.Tax);
     }
 
+    /// <summary>
+    /// Tests the calculation from a net salary of 1500 using the primary tax rate,
+    /// verifying correct net salary, contribution, and tax calculations.
+    /// </summary>
     [Fact]
     public void CalculatePaycheck_Primary1500()
     {
@@ -154,6 +218,10 @@ public class CalculateWageFromNetSalaryTests
         Assert.Equal(120.30M, calculatedSalary.Tax);
     }
 
+    /// <summary>
+    /// Tests the calculation from a net salary of 1500 using the secondary tax rate,
+    /// verifying correct net salary, contribution, and tax calculations.
+    /// </summary>
     [Fact]
     public void CalculatePaycheck_Secondary1500()
     {
@@ -164,6 +232,10 @@ public class CalculateWageFromNetSalaryTests
         Assert.Equal(142.50M, calculatedSalary.Tax);
     }
 
+    /// <summary>
+    /// Tests the calculation from a net salary of 1714.29 using the primary tax rate,
+    /// verifying correct net salary, contribution, and tax calculations.
+    /// </summary>
     [Fact]
     public void CalculatePaycheck_Primary1714_29()
     {
