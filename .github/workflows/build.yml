@@ -20,6 +20,7 @@ env:
   # Set the build number in MinVer.
   MINVERBUILDMETADATA: build.${{github.run_number}}
 
+
 jobs:
   build:
     name: Build-${{matrix.os}}
@@ -54,6 +55,28 @@ jobs:
         with:
           name: ${{matrix.os}}
           path: "./Artefacts"
+
+  push-github-packages:
+    name: "Push GitHub Packages"
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: "GitHub Packages"
+      url: https://github.com/tramston/dotnet-wage-calculator/packages
+    permissions:
+      packages: write
+    runs-on: windows-latest
+    steps:
+      - name: "Download Artefact"
+        uses: actions/download-artifact@v3.0.0
+        with:
+          name: "windows-latest"
+      - name: "Dotnet NuGet Add Source"
+        run: dotnet nuget add source https://nuget.pkg.github.com/leonard-morina/index.json --name GitHub --username leonard-morina --password ${{secrets.GITHUB_TOKEN}}
+        shell: pwsh
+      - name: "Dotnet NuGet Push"
+        run: dotnet nuget push .\*.nupkg --api-key ${{ github.token }} --source GitHub --skip-duplicate
+        shell: pwsh
 
   push-nuget:
     name: "Push NuGet Packages"
