@@ -2,12 +2,13 @@
 
   <PropertyGroup Label="Build">
     <TargetFramework>net7.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Label="Package">
-    <Product>Project Title</Product>
-    <Description>Project Description</Description>
-    <PackageTags>Tag1;Tag2;Tag3</PackageTags>
+    <Product>Wage Calculator</Product>
+    <Description>WageCalculator is a C# library designed to accurately calculate gross and net wages from given salaries. It handles multiple tax brackets, computes contributions, and provides detailed tax breakdowns. Ideal for integrating into payroll systems and financial software.</Description>
+    <PackageTags>wage;salary;calculate;dotnet;</PackageTags>
   </PropertyGroup>
 
 </Project>
