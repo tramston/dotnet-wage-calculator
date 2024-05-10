@@ -3,7 +3,7 @@ name: Deploy to NuGet
 on:
   push:
     tags:
-      - "v*"
+      - "*"
 
 env:
   # Disable the .NET logo in the console output.
@@ -73,7 +73,8 @@ jobs:
 
       - name: "Get Version"
         id: version
-        uses: dhkatz/get-version-action@v3
+        uses: battila7/get-version-action@v2
+
 
       - name: "Pack project"
         run: dotnet pack ${{ env.PROJECT_PATH }} --no-restore --no-build --configuration Release --include-symbols -p:PackageVersion=${{ steps.version.outputs.version-without-v }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
