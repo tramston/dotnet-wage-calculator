@@ -96,15 +96,12 @@ jobs:
 
       - name: Extract version from tag
         id: get_version
-        run: echo "##[set-output name=version;]$(echo ${GITHUB_REF#refs/tags/v})"
+        run: echo "##[set-output name=version;]$(echo ${GITHUB_REF#refs/tags/})"
         shell: bash
 
-      - name: "Get Version"
-        id: version
-        uses: battila7/get-version-action@v2
 
       - name: "Pack project"
-        run: dotnet pack ${{ env.PROJECT_PATH }} --no-restore --configuration Release --include-symbols -p:PackageVersion=${{ steps.version.outputs.version }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
+        run: dotnet pack ${{ env.PROJECT_PATH }} --no-restore --configuration Release --include-symbols -p:PackageVersion=${{ steps.get_version.outputs.version }} --output ${{ env.PACKAGE_OUTPUT_DIRECTORY }}
 
       - name: "Push package"
         run: dotnet nuget push ${{ env.PACKAGE_OUTPUT_DIRECTORY }}\*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s ${{ env.NUGET_SOURCE_URL }} --skip-duplicate
