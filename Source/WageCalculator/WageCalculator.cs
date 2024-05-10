@@ -3,26 +3,29 @@ namespace WageCalculator;
 /// <summary>
 /// Provides methods to calculate gross and net wages based on given tax brackets and contribution rates.
 /// </summary>
-public class WageCalculator
+/// <typeparam name="T">The type of the identifier used for the health insurance member.</typeparam>
+public class WageCalculator<T>
 {
     private readonly List<TaxBracket> taxBrackets;
+    private readonly HealthInsuranceSchema<T> healthInsuranceSchema;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="WageCalculator"/> class with specified tax brackets.
+    /// Initializes a new instance of the <see cref="WageCalculator{T}"/> class with specified tax brackets and health insurance schema.
     /// </summary>
     /// <param name="taxBrackets">A list of tax brackets used for wage calculations.</param>
-    public WageCalculator(List<TaxBracket> taxBrackets) => this.taxBrackets = taxBrackets;
+    /// <param name="healthInsuranceSchema">The health insurance schema containing details about health insurance members.</param>
+    public WageCalculator(List<TaxBracket> taxBrackets, HealthInsuranceSchema<T> healthInsuranceSchema)
+    {
+        this.taxBrackets = taxBrackets;
+        this.healthInsuranceSchema = healthInsuranceSchema;
+    }
 
     /// <summary>
-    /// Calculates gross wage from a given net salary considering specified tax and contribution details.
+    /// Calculates the gross wage from a given net salary considering specified tax and contribution details encapsulated in the <see cref="WageCalculationParameters{T}"/> object.
     /// </summary>
-    /// <param name="netSalary">The net salary from which to calculate the gross wage.</param>
-    /// <param name="taxRateType">Specifies the type of tax rate to apply (primary or secondary).</param>
-    /// <param name="contributionPercentage">The percentage of contributions (e.g., pension, health) deducted from the gross salary, defaults to 5.0%.</param>
-    /// <param name="hasTaxes">Indicates whether tax deductions should be considered in the calculation, defaults to true.</param>
-    /// <param name="taxBreakdown">If set to true, provides a detailed breakdown of taxes calculated at each bracket.</param>
+    /// <param name="wageCalculationParameters">The parameters including net salary, tax rate type, contribution percentage, whether taxes should be considered, and whether a tax breakdown should be provided.</param>
     /// <returns>A <see cref="CalculatedWage"/> object containing details of the calculated gross wage, net salary, total tax, and contributions.</returns>
-    public CalculatedWage CalculateFromNet(decimal netSalary, TaxBracketRateType taxRateType, decimal contributionPercentage = 5.0M, bool hasTaxes = true, bool taxBreakdown = false)
+    public CalculatedWage CalculateFromNet(WageCalculationParameters<T> wageCalculationParameters)
     {
         var calculatedSalary = new CalculatedWage();
 
@@ -32,22 +35,23 @@ public class WageCalculator
         var index = 0;
         foreach (var bracket in this.taxBrackets)
         {
-            var taxRate = bracket.Rates.FirstOrDefault(x => x.RateType == taxRateType)?.Rate ?? 0;
+            var taxRate =
+                bracket.Rates.FirstOrDefault(x => x.RateType == wageCalculationParameters.TaxRateType)?.Rate ?? 0;
             var currentThreshold = bracket.Threshold;
             decimal a = 0;
             decimal total = 0;
             if (taxRate > 0)
             {
                 var c = (100 - (taxRate * 100)) / 100;
-                a = (netSalary + totalTax - previousThreshold) / c;
+                a = (wageCalculationParameters.Salary + totalTax - previousThreshold) / c;
                 a = Math.Max(
-                    Math.Min(a, currentThreshold == null ? a : (currentThreshold ?? netSalary) - previousThreshold), 0);
+                    Math.Min(a, currentThreshold == null ? a : (currentThreshold ?? wageCalculationParameters.Salary) - previousThreshold), 0);
                 total = a * taxRate;
             }
 
             totalTax += total;
 
-            if (taxBreakdown)
+            if (wageCalculationParameters.TaxBreakdown)
             {
                 if (bracket.Threshold == null)
                 {
@@ -79,38 +83,41 @@ public class WageCalculator
         }
 
         totalTax = Math.Round(totalTax, 2, MidpointRounding.AwayFromZero);
-        var taxedSalary = netSalary + totalTax;
+        var taxedSalary = wageCalculationParameters.Salary + totalTax;
 
-        var contribution = taxedSalary / (1 - (contributionPercentage / 100));
-        contribution *= contributionPercentage / 100;
+        var contribution = taxedSalary / (1 - (wageCalculationParameters.ContributionPercentage / 100));
+        contribution *= wageCalculationParameters.ContributionPercentage / 100;
         contribution = Math.Round(contribution, 2, MidpointRounding.AwayFromZero);
         var gross =
-            hasTaxes ? Math.Round(taxedSalary + contribution, 2, MidpointRounding.AwayFromZero) : taxedSalary;
+            wageCalculationParameters.HasTaxes
+                ? Math.Round(taxedSalary + contribution, 2, MidpointRounding.AwayFromZero)
+                : taxedSalary;
 
         calculatedSalary.Gross = gross;
-        calculatedSalary.Net = netSalary;
+        calculatedSalary.Net = wageCalculationParameters.Salary;
         calculatedSalary.Contribution = contribution;
-        calculatedSalary.Tax = hasTaxes ? totalTax : 0;
+        calculatedSalary.Tax = wageCalculationParameters.HasTaxes ? totalTax : 0;
 
-        return calculatedSalary;
+        if (!(wageCalculationParameters.HealthInsuranceSetup?.HasHealthInsurance ?? false))
+        {
+            return calculatedSalary;
+        }
+
+        return this.CalculateAdjustedSalaryWithHealthInsurance(wageCalculationParameters, calculatedSalary.Gross, calculatedSalary.Net);
     }
 
     /// <summary>
-    /// Calculates net wage from a given gross salary considering specified tax and contribution details.
+    /// Calculates the net wage from a given gross salary considering specified tax and contribution details encapsulated in the <see cref="WageCalculationParameters{T}"/> object.
     /// </summary>
-    /// <param name="grossSalary">The gross salary from which to calculate the net wage.</param>
-    /// <param name="taxRateType">Specifies the type of tax rate to apply (primary or secondary).</param>
-    /// <param name="contributionPercentage">The percentage of contributions (e.g., pension, health) deducted from the gross salary, defaults to 5.0%.</param>
-    /// <param name="hasTaxes">Indicates whether tax deductions should be considered in the calculation, defaults to true.</param>
-    /// <param name="taxBreakdown">If set to true, provides a detailed breakdown of taxes calculated at each bracket.</param>
-    /// <returns>A <see cref="CalculatedWage"/> object containing details of the calculated net wage, gross salary, total tax, and contributions.</returns>
-    public CalculatedWage CalculateFromGross(decimal grossSalary, TaxBracketRateType taxRateType, decimal contributionPercentage = 5.0M, bool hasTaxes = true, bool taxBreakdown = false)
+    /// <param name="wageCalculationParameters">The parameters including net salary, tax rate type, contribution percentage, whether taxes should be considered, and whether a tax breakdown should be provided.</param>
+    /// <returns>A <see cref="CalculatedWage"/> object containing details of the calculated gross wage, net salary, total tax, and contributions.</returns>
+    public CalculatedWage CalculateFromGross(WageCalculationParameters<T> wageCalculationParameters)
     {
         var calculatedSalary = new CalculatedWage();
 
         var contribution =
-            Math.Round(grossSalary * contributionPercentage / 100, 2, MidpointRounding.AwayFromZero);
-        var taxedSalary = Math.Round(grossSalary - contribution, 2, MidpointRounding.AwayFromZero);
+            Math.Round(wageCalculationParameters.Salary * wageCalculationParameters.ContributionPercentage / 100, 2, MidpointRounding.AwayFromZero);
+        var taxedSalary = Math.Round(wageCalculationParameters.Salary - contribution, 2, MidpointRounding.AwayFromZero);
         var remainingSalary = taxedSalary;
         var totalTax = 0m;
         decimal previousThreshold = 0;
@@ -128,28 +135,31 @@ public class WageCalculator
                 : remainingSalary;
             var taxableAmount = Math.Min(remainingSalary, currentThreshold);
 
-            var taxRate = bracket.Rates.FirstOrDefault(x => x.RateType == taxRateType)?.Rate ?? 0;
+            var taxRate =
+                bracket.Rates.FirstOrDefault(x => x.RateType == wageCalculationParameters.TaxRateType)?.Rate ?? 0;
             var bracketTax = Math.Round(taxableAmount * taxRate, 2, MidpointRounding.AwayFromZero);
             totalTax += bracketTax;
 
-            if (taxBreakdown)
+            if (wageCalculationParameters.TaxBreakdown)
             {
                 if (bracket.Threshold == null)
                 {
-                    calculatedSalary.BreakDown.Add(new TaxBracketBreakDown
-                    {
-                        ThresholdFrom = this.taxBrackets[index - 1].Threshold,
-                        Tax = bracketTax,
-                    });
+                    calculatedSalary.BreakDown.Add(
+                        new TaxBracketBreakDown
+                        {
+                            ThresholdFrom = this.taxBrackets[index - 1].Threshold,
+                            Tax = bracketTax,
+                        });
                 }
                 else
                 {
-                    calculatedSalary.BreakDown.Add(new TaxBracketBreakDown
-                    {
-                        ThresholdFrom = previousThreshold,
-                        ThresholdTo = currentThreshold,
-                        Tax = bracketTax,
-                    });
+                    calculatedSalary.BreakDown.Add(
+                        new TaxBracketBreakDown
+                        {
+                            ThresholdFrom = previousThreshold,
+                            ThresholdTo = currentThreshold,
+                            Tax = bracketTax,
+                        });
                 }
             }
 
@@ -164,13 +174,92 @@ public class WageCalculator
             previousThreshold = bracket.Threshold.Value;
         }
 
-        var net = hasTaxes ? Math.Round(taxedSalary - totalTax, 2, MidpointRounding.AwayFromZero) : taxedSalary;
+        var net = wageCalculationParameters.HasTaxes
+            ? Math.Round(taxedSalary - totalTax, 2, MidpointRounding.AwayFromZero)
+            : taxedSalary;
 
-        calculatedSalary.Gross = grossSalary;
+        calculatedSalary.Gross = wageCalculationParameters.Salary;
         calculatedSalary.Net = net;
         calculatedSalary.Contribution = contribution;
-        calculatedSalary.Tax = hasTaxes ? totalTax : 0;
+        calculatedSalary.Tax = wageCalculationParameters.HasTaxes ? totalTax : 0;
 
-        return calculatedSalary;
+        if (!(wageCalculationParameters.HealthInsuranceSetup?.HasHealthInsurance ?? false))
+        {
+            return calculatedSalary;
+        }
+
+        return this.CalculateAdjustedSalaryWithHealthInsurance(wageCalculationParameters, calculatedSalary.Gross, calculatedSalary.Net);
+    }
+
+    /// <summary>
+    /// Adjusts the calculated salary based on the health insurance contributions, recalculating gross and net salaries to include health insurance costs.
+    /// </summary>
+    /// <param name="wageCalculationParameters">The parameters including tax rate type, contribution percentage, whether taxes should be considered, health insurance details, and whether a tax breakdown should be provided.</param>
+    /// <param name="grossBaseSalary">The gross base salary without health insurance. </param>
+    /// <param name="netBaseValue">The net base salary without health insurance. </param>
+    /// <returns>A <see cref="CalculatedWage"/> object that includes adjustments for health insurance contributions.</returns>
+    private CalculatedWage CalculateAdjustedSalaryWithHealthInsurance(
+        WageCalculationParameters<T> wageCalculationParameters,
+        decimal grossBaseSalary,
+        decimal netBaseValue)
+    {
+        var prime = Math.Round(this.healthInsuranceSchema.Prime, 2, MidpointRounding.AwayFromZero);
+        var calculatedHealthInsuranceForGross = this.CalculateFromNet(
+            new WageCalculationParameters<T>
+            {
+                Salary = prime *
+                         (wageCalculationParameters.HealthInsuranceSetup.HealthInsurancePercentage / 100),
+                HasTaxes = true,
+                TaxRateType = TaxBracketRateType.Secondary,
+            });
+
+        var adjustedSalaryAfterHealthInsurance = this.CalculateFromGross(
+            new WageCalculationParameters<T>
+            {
+                Salary = calculatedHealthInsuranceForGross.Gross + grossBaseSalary,
+                HasTaxes = wageCalculationParameters.HasTaxes,
+                TaxBreakdown = wageCalculationParameters.TaxBreakdown,
+                ContributionPercentage = wageCalculationParameters.ContributionPercentage,
+                TaxRateType = wageCalculationParameters.TaxRateType,
+            });
+
+        decimal newNetValue;
+
+        if (wageCalculationParameters.HealthInsuranceSetup.HealthInsurancePercentage == 100)
+        {
+            newNetValue = netBaseValue;
+        }
+        else if (wageCalculationParameters.HealthInsuranceSetup.HealthInsurancePercentage == 0)
+        {
+            newNetValue = netBaseValue - prime;
+        }
+        else
+        {
+            var calculatedHealthInsuranceForNet = this.CalculateFromNet(
+                new WageCalculationParameters<T>
+                {
+                    Salary = prime *
+                             ((100 - wageCalculationParameters.HealthInsuranceSetup.HealthInsurancePercentage) / 100),
+                    HasTaxes = true,
+                    TaxRateType = TaxBracketRateType.Secondary,
+                });
+            newNetValue = netBaseValue - calculatedHealthInsuranceForNet.Net;
+        }
+
+        foreach (var member in wageCalculationParameters.HealthInsuranceSetup.Members)
+        {
+            var memberSchema =
+                this.healthInsuranceSchema.MembersSchema.FirstOrDefault(x => x.Id != null && x.Id.Equals(member.Id));
+            if (memberSchema == null)
+            {
+                continue;
+            }
+
+            newNetValue -= memberSchema.Prime * member.Members;
+        }
+
+        adjustedSalaryAfterHealthInsurance.Net = newNetValue;
+
+        return adjustedSalaryAfterHealthInsurance;
     }
 }

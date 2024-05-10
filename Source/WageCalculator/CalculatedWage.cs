@@ -21,6 +21,18 @@ public class CalculatedWage
     public decimal Contribution { get; set; }
 
     /// <summary>
+    /// Gets or sets the percentage of the gross wage that is allocated for health insurance.
+    /// </summary>
+    /// <value>The percentage of gross wage dedicated to health insurance.</value>
+    public decimal HealthInsurancePercentage { get; set; }
+
+    /// <summary>
+    /// Gets or sets the prime or base amount for health insurance before any modifications based on percentage.
+    /// </summary>
+    /// <value>The base prime amount for health insurance.</value>
+    public decimal HealthInsurancePrime { get; set; }
+
+    /// <summary>
     /// Gets or sets the total tax deducted from the gross wage. This is the sum of taxes across all applicable tax brackets.
     /// </summary>
     public decimal Tax { get; set; }

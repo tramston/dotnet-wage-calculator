@@ -4,7 +4,7 @@ namespace WageCalculator;
 /// Represents a member of a health insurance plan.
 /// </summary>
 /// <typeparam name="T">The type of the identifier used for the health insurance member.</typeparam>
-public class HealthInsuranceMember<T>
+public class HealthInsuranceMemberSchema<T>
 {
     /// <summary>
     /// Gets or sets the identifier for the health insurance member.
