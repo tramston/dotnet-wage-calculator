@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="xunit" Version="2.5.0" />
+    <PackageReference Update="xunit" Version="2.8.0" />
     <PackageReference Remove="xunit.runner.visualstudio" />
     <PackageReference Remove="Moq" />
     <PackageReference Remove="Microsoft.VisualStudio.Threading.Analyzers" />
