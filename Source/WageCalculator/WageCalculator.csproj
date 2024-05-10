@@ -9,6 +9,7 @@
     <Product>Wage Calculator</Product>
     <Description>WageCalculator is a C# library designed to accurately calculate gross and net wages from given salaries. It handles multiple tax brackets, computes contributions, and provides detailed tax breakdowns. Ideal for integrating into payroll systems and financial software.</Description>
     <PackageTags>wage;salary;calculate;dotnet;</PackageTags>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <IncludeSymbols>true</IncludeSymbols>
   </PropertyGroup>
-
 </Project>
