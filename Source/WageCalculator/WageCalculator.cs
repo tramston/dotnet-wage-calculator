@@ -90,7 +90,7 @@ public class WageCalculator
         calculatedSalary.Gross = gross;
         calculatedSalary.Net = netSalary;
         calculatedSalary.Contribution = contribution;
-        calculatedSalary.Tax = totalTax;
+        calculatedSalary.Tax = hasTaxes ? totalTax : 0;
 
         return calculatedSalary;
     }
@@ -169,7 +169,7 @@ public class WageCalculator
         calculatedSalary.Gross = grossSalary;
         calculatedSalary.Net = net;
         calculatedSalary.Contribution = contribution;
-        calculatedSalary.Tax = totalTax;
+        calculatedSalary.Tax = hasTaxes ? totalTax : 0;
 
         return calculatedSalary;
     }
