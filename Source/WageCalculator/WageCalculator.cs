@@ -29,7 +29,7 @@ public class WageCalculator<T>
     {
         var calculatedSalary = new CalculatedWage();
 
-        var totalTax = 0m;
+        var preciseTotalTax = 0m;
         decimal previousThreshold = 0;
 
         var index = 0;
@@ -43,13 +43,13 @@ public class WageCalculator<T>
             if (taxRate > 0)
             {
                 var c = (100 - (taxRate * 100)) / 100;
-                a = (wageCalculationParameters.Salary + totalTax - previousThreshold) / c;
+                a = (wageCalculationParameters.Salary + preciseTotalTax - previousThreshold) / c;
                 a = Math.Max(
                     Math.Min(a, currentThreshold == null ? a : (currentThreshold ?? wageCalculationParameters.Salary) - previousThreshold), 0);
                 total = a * taxRate;
             }
 
-            totalTax += total;
+            preciseTotalTax += total;
 
             if (wageCalculationParameters.TaxBreakdown)
             {
@@ -82,12 +82,12 @@ public class WageCalculator<T>
             previousThreshold = bracket.Threshold.Value;
         }
 
-        totalTax = Math.Round(totalTax, 2, MidpointRounding.AwayFromZero);
+        var totalTax = Math.Round(preciseTotalTax, 2, MidpointRounding.AwayFromZero);
         var taxedSalary = wageCalculationParameters.Salary + totalTax;
 
-        var contribution = taxedSalary / (1 - (wageCalculationParameters.ContributionPercentage / 100));
-        contribution *= wageCalculationParameters.ContributionPercentage / 100;
-        contribution = Math.Round(contribution, 2, MidpointRounding.AwayFromZero);
+        var preciseContribution = taxedSalary / (1 - (wageCalculationParameters.ContributionPercentage / 100));
+        preciseContribution *= wageCalculationParameters.ContributionPercentage / 100;
+        var contribution = Math.Round(preciseContribution, 2, MidpointRounding.AwayFromZero);
         var gross =
             wageCalculationParameters.HasTaxes
                 ? Math.Round(taxedSalary + contribution, 2, MidpointRounding.AwayFromZero)
@@ -103,7 +103,7 @@ public class WageCalculator<T>
             return calculatedSalary;
         }
 
-        return this.CalculateAdjustedSalaryWithHealthInsurance(wageCalculationParameters, calculatedSalary.Gross, calculatedSalary.Net);
+        return this.CalculateAdjustedSalaryWithHealthInsurance(wageCalculationParameters, calculatedSalary.Gross, preciseContribution, wageCalculationParameters.HasTaxes ? preciseTotalTax : 0);
     }
 
     /// <summary>
@@ -115,10 +115,12 @@ public class WageCalculator<T>
     {
         var calculatedSalary = new CalculatedWage();
 
+        var preciseContribution = wageCalculationParameters.Salary * wageCalculationParameters.ContributionPercentage / 100;
         var contribution =
-            Math.Round(wageCalculationParameters.Salary * wageCalculationParameters.ContributionPercentage / 100, 2, MidpointRounding.AwayFromZero);
+            Math.Round(preciseContribution, 2, MidpointRounding.AwayFromZero);
         var taxedSalary = Math.Round(wageCalculationParameters.Salary - contribution, 2, MidpointRounding.AwayFromZero);
         var remainingSalary = taxedSalary;
+        var preciseTotalTax = 0m;
         var totalTax = 0m;
         decimal previousThreshold = 0;
 
@@ -137,8 +139,10 @@ public class WageCalculator<T>
 
             var taxRate =
                 bracket.Rates.FirstOrDefault(x => x.RateType == wageCalculationParameters.TaxRateType)?.Rate ?? 0;
-            var bracketTax = Math.Round(taxableAmount * taxRate, 2, MidpointRounding.AwayFromZero);
+            var priceBracketTax = taxableAmount * taxRate;
+            var bracketTax = Math.Round(priceBracketTax, 2, MidpointRounding.AwayFromZero);
             totalTax += bracketTax;
+            preciseTotalTax += priceBracketTax;
 
             if (wageCalculationParameters.TaxBreakdown)
             {
@@ -188,7 +192,7 @@ public class WageCalculator<T>
             return calculatedSalary;
         }
 
-        return this.CalculateAdjustedSalaryWithHealthInsurance(wageCalculationParameters, calculatedSalary.Gross, calculatedSalary.Net);
+        return this.CalculateAdjustedSalaryWithHealthInsurance(wageCalculationParameters, calculatedSalary.Gross, preciseContribution, wageCalculationParameters.HasTaxes ? preciseTotalTax : 0);
     }
 
     /// <summary>
@@ -196,12 +200,10 @@ public class WageCalculator<T>
     /// </summary>
     /// <param name="wageCalculationParameters">The parameters including tax rate type, contribution percentage, whether taxes should be considered, health insurance details, and whether a tax breakdown should be provided.</param>
     /// <param name="grossBaseSalary">The gross base salary without health insurance. </param>
-    /// <param name="netBaseValue">The net base salary without health insurance. </param>
+    /// <param name="contribution">The "precise contribution" of the grossBaseSalary. </param>
+    /// <param name="tax">The "precise tax" of the grossBaseSalary. </param>
     /// <returns>A <see cref="CalculatedWage"/> object that includes adjustments for health insurance contributions.</returns>
-    private CalculatedWage CalculateAdjustedSalaryWithHealthInsurance(
-        WageCalculationParameters<T> wageCalculationParameters,
-        decimal grossBaseSalary,
-        decimal netBaseValue)
+    private CalculatedWage CalculateAdjustedSalaryWithHealthInsurance(WageCalculationParameters<T> wageCalculationParameters, decimal grossBaseSalary, decimal contribution, decimal tax)
     {
         var prime = Math.Round(this.healthInsuranceSchema.Prime, 2, MidpointRounding.AwayFromZero);
         var calculatedHealthInsuranceForGross = this.CalculateFromNet(
@@ -223,6 +225,7 @@ public class WageCalculator<T>
                 TaxRateType = wageCalculationParameters.TaxRateType,
             });
 
+        var netBaseValue = grossBaseSalary - contribution - tax;
         decimal newNetValue;
 
         if (wageCalculationParameters.HealthInsuranceSetup.HealthInsurancePercentage == 100)
@@ -258,7 +261,7 @@ public class WageCalculator<T>
             newNetValue -= memberSchema.Prime * member.Members;
         }
 
-        adjustedSalaryAfterHealthInsurance.Net = newNetValue;
+        adjustedSalaryAfterHealthInsurance.Net = Math.Round(newNetValue, 2, MidpointRounding.AwayFromZero);
 
         return adjustedSalaryAfterHealthInsurance;
     }
