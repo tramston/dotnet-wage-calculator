@@ -249,6 +249,7 @@ public class WageCalculator<T>
             newNetValue = netBaseValue - calculatedHealthInsuranceForNet.Net;
         }
 
+        var totalPrime = prime;
         foreach (var member in wageCalculationParameters.HealthInsuranceSetup.Members)
         {
             var memberSchema =
@@ -258,10 +259,20 @@ public class WageCalculator<T>
                 continue;
             }
 
-            newNetValue -= memberSchema.Prime * member.Members;
+            var memberPrime = memberSchema.Prime * member.Members;
+            totalPrime += memberPrime;
+            newNetValue -= memberPrime;
         }
 
         adjustedSalaryAfterHealthInsurance.Net = Math.Round(newNetValue, 2, MidpointRounding.AwayFromZero);
+
+        adjustedSalaryAfterHealthInsurance.HealthInsurancePrime = prime;
+        var calculatedTax = adjustedSalaryAfterHealthInsurance.Gross - totalPrime -
+                    adjustedSalaryAfterHealthInsurance.Contribution - adjustedSalaryAfterHealthInsurance.Net;
+        if (calculatedTax != adjustedSalaryAfterHealthInsurance.Tax)
+        {
+            adjustedSalaryAfterHealthInsurance.Tax = calculatedTax;
+        }
 
         return adjustedSalaryAfterHealthInsurance;
     }
