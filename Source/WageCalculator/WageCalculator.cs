@@ -274,6 +274,10 @@ public class WageCalculator<T>
             adjustedSalaryAfterHealthInsurance.Tax = calculatedTax;
         }
 
+        adjustedSalaryAfterHealthInsurance.HealthInsurancePercentage =
+            wageCalculationParameters.HealthInsuranceSetup.HealthInsurancePercentage;
+        adjustedSalaryAfterHealthInsurance.HealthInsurancePrime = prime;
+        adjustedSalaryAfterHealthInsurance.HealthInsuranceValue = calculatedHealthInsuranceForGross.Gross;
         return adjustedSalaryAfterHealthInsurance;
     }
 
@@ -282,27 +286,17 @@ public class WageCalculator<T>
     /// </summary>
     /// <param name="wageCalculationParameters">The parameters including tax rate type, contribution percentage, whether taxes should be considered, health insurance details, and whether a tax breakdown should be provided.</param>
     /// <param name="grossBaseSalary">The gross base salary without health insurance. </param>
-    /// <param name="contribution">The "precise contribution" of the grossBaseSalary. </param>
-    /// <param name="tax">The "precise tax" of the grossBaseSalary. </param>
     /// <param name="netValue">The Net Value. </param>
     /// <returns>A <see cref="CalculatedWage"/> object that includes adjustments for health insurance contributions.</returns>
-    private CalculatedWage CalculateAdjustedSalaryForGrossSalarySmallerThan450(WageCalculationParameters<T> wageCalculationParameters, decimal grossBaseSalary, decimal contribution, decimal tax, decimal netValue)
+    private CalculatedWage CalculateAdjustedSalaryForGrossSalarySmallerThan450(WageCalculationParameters<T> wageCalculationParameters, decimal grossBaseSalary, decimal netValue)
     {
         var prime = Math.Round(this.healthInsuranceSchema.Prime, 2, MidpointRounding.AwayFromZero);
-        var calculatedHealthInsuranceForGross = this.CalculateFromNet(
-            new WageCalculationParameters<T>
-            {
-                Salary = prime *
-                         (wageCalculationParameters.HealthInsuranceSetup.HealthInsurancePercentage / 100),
-                HasTaxes = true,
-                TaxRateType = TaxBracketRateType.Secondary,
-            });
 
-        var a = prime * (wageCalculationParameters.HealthInsuranceSetup.HealthInsurancePercentage / 100);
+        var netHealthInsurance = prime * (wageCalculationParameters.HealthInsuranceSetup.HealthInsurancePercentage / 100);
         var adjustedSalaryAfterHealthInsurance = this.CalculateFromNet(
             new WageCalculationParameters<T>
             {
-                Salary = a + netValue,
+                Salary = netHealthInsurance + netValue,
                 HasTaxes = wageCalculationParameters.HasTaxes,
                 TaxBreakdown = wageCalculationParameters.TaxBreakdown,
                 ContributionPercentage = wageCalculationParameters.ContributionPercentage,
@@ -310,7 +304,6 @@ public class WageCalculator<T>
             });
 
         var healthInsurancePrime = adjustedSalaryAfterHealthInsurance.Gross - grossBaseSalary;
-        var netBaseValue = adjustedSalaryAfterHealthInsurance.Gross - contribution - tax - healthInsurancePrime;
         var newNetValue = adjustedSalaryAfterHealthInsurance.Net;
 
         var totalPrime = prime;
@@ -332,6 +325,9 @@ public class WageCalculator<T>
 
         adjustedSalaryAfterHealthInsurance.HealthInsurancePrime = prime;
 
+        adjustedSalaryAfterHealthInsurance.HealthInsurancePercentage =
+            wageCalculationParameters.HealthInsuranceSetup.HealthInsurancePercentage;
+        adjustedSalaryAfterHealthInsurance.HealthInsuranceValue = healthInsurancePrime;
         return adjustedSalaryAfterHealthInsurance;
     }
 
@@ -351,7 +347,7 @@ public class WageCalculator<T>
             return this.CalculateAdjustedSalaryForGrossSalaryEqualOrBiggerThan450(wageCalculationParameters, grossBaseSalary, contribution, tax);
         }
 
-        return this.CalculateAdjustedSalaryForGrossSalarySmallerThan450(wageCalculationParameters, grossBaseSalary, contribution, tax, netValue);
+        return this.CalculateAdjustedSalaryForGrossSalarySmallerThan450(wageCalculationParameters, grossBaseSalary, netValue);
     }
 
     // /// <summary>

@@ -33,6 +33,12 @@ public class CalculatedWage
     public decimal HealthInsurancePrime { get; set; }
 
     /// <summary>
+    /// Gets or sets the total health insurance value.
+    /// </summary>
+    /// <value>The health insurance value.</value>
+    public decimal HealthInsuranceValue { get; set; }
+
+    /// <summary>
     /// Gets or sets the total tax deducted from the gross wage. This is the sum of taxes across all applicable tax brackets.
     /// </summary>
     public decimal Tax { get; set; }
