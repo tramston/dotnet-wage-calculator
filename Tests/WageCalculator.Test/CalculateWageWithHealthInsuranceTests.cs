@@ -28,7 +28,7 @@ public class CalculateWageWithHealthInsuranceTests
             {
                 Salary = 1000,
                 TaxRateType = TaxBracketRateType.Primary,
-                HealthInsuranceSetup = new HealthInsuranceSetup<string> { HealthInsurancePercentage = 100.00M, HasHealthInsurance = true },
+                HealthInsuranceSetup = new HealthInsuranceSetup<string> { HealthInsurancePercentage = 100.00M },
             });
         Assert.Equal(1032.75M, calculatedSalary.Gross);
         Assert.Equal(877.20M, calculatedSalary.Net);
@@ -49,7 +49,7 @@ public class CalculateWageWithHealthInsuranceTests
             {
                 Salary = 1300,
                 TaxRateType = TaxBracketRateType.Primary,
-                HealthInsuranceSetup = new HealthInsuranceSetup<string> { HealthInsurancePercentage = 100.00M, HasHealthInsurance = true },
+                HealthInsuranceSetup = new HealthInsuranceSetup<string> { HealthInsurancePercentage = 100.00M },
             });
         Assert.Equal(1332.75M, calculatedSalary.Gross);
         Assert.Equal(1133.7M, calculatedSalary.Net);
@@ -70,7 +70,7 @@ public class CalculateWageWithHealthInsuranceTests
             {
                 Salary = 970,
                 TaxRateType = TaxBracketRateType.Primary,
-                HealthInsuranceSetup = new HealthInsuranceSetup<string> { HealthInsurancePercentage = 50.00M, HasHealthInsurance = true },
+                HealthInsuranceSetup = new HealthInsuranceSetup<string> { HealthInsurancePercentage = 50.00M },
             });
         Assert.Equal(986.38M, calculatedSalary.Gross);
         Assert.Equal(837.55M, calculatedSalary.Net);
@@ -91,7 +91,7 @@ public class CalculateWageWithHealthInsuranceTests
             {
                 Salary = 975,
                 TaxRateType = TaxBracketRateType.Primary,
-                HealthInsuranceSetup = new HealthInsuranceSetup<string> { HealthInsurancePercentage = 100.00M, HasHealthInsurance = true },
+                HealthInsuranceSetup = new HealthInsuranceSetup<string> { HealthInsurancePercentage = 100.00M },
             });
         Assert.Equal(1007.75M, calculatedSalary.Gross);
         Assert.Equal(855.83M, calculatedSalary.Net);
@@ -112,7 +112,7 @@ public class CalculateWageWithHealthInsuranceTests
             {
                 Salary = 875,
                 TaxRateType = TaxBracketRateType.Primary,
-                HealthInsuranceSetup = new HealthInsuranceSetup<string> { HealthInsurancePercentage = 50.00M, HasHealthInsurance = true },
+                HealthInsuranceSetup = new HealthInsuranceSetup<string> { HealthInsurancePercentage = 50.00M },
             });
         Assert.Equal(891.38M, calculatedSalary.Gross);
         Assert.Equal(756.33M, calculatedSalary.Net);
@@ -133,7 +133,7 @@ public class CalculateWageWithHealthInsuranceTests
             {
                 Salary = 910,
                 TaxRateType = TaxBracketRateType.Primary,
-                HealthInsuranceSetup = new HealthInsuranceSetup<string> { HealthInsurancePercentage = 50.00M, HasHealthInsurance = true },
+                HealthInsuranceSetup = new HealthInsuranceSetup<string> { HealthInsurancePercentage = 50.00M },
             });
         Assert.Equal(926.38M, calculatedSalary.Gross);
         Assert.Equal(786.25M, calculatedSalary.Net);
@@ -154,7 +154,7 @@ public class CalculateWageWithHealthInsuranceTests
             {
                 Salary = 875,
                 TaxRateType = TaxBracketRateType.Primary,
-                HealthInsuranceSetup = new HealthInsuranceSetup<string> { HealthInsurancePercentage = 90.00M, HasHealthInsurance = true },
+                HealthInsuranceSetup = new HealthInsuranceSetup<string> { HealthInsurancePercentage = 90.00M },
             });
         Assert.Equal(904.47M, calculatedSalary.Gross);
         Assert.Equal(767.53M, calculatedSalary.Net);
@@ -175,7 +175,7 @@ public class CalculateWageWithHealthInsuranceTests
             {
                 Salary = 875,
                 TaxRateType = TaxBracketRateType.Primary,
-                HealthInsuranceSetup = new HealthInsuranceSetup<string> { HealthInsurancePercentage = 10.00M, HasHealthInsurance = true },
+                HealthInsuranceSetup = new HealthInsuranceSetup<string> { HealthInsurancePercentage = 10.00M },
             });
         Assert.Equal(878.27M, calculatedSalary.Gross);
         Assert.Equal(745.13M, calculatedSalary.Net);
@@ -196,7 +196,7 @@ public class CalculateWageWithHealthInsuranceTests
             {
                 Salary = 875,
                 TaxRateType = TaxBracketRateType.Primary,
-                HealthInsuranceSetup = new HealthInsuranceSetup<string> { HealthInsurancePercentage = 100.00M, HasHealthInsurance = true, },
+                HealthInsuranceSetup = new HealthInsuranceSetup<string> { HealthInsurancePercentage = 100.00M },
             });
         Assert.Equal(907.75M, calculatedSalary.Gross);
         Assert.Equal(770.33M, calculatedSalary.Net);
@@ -217,7 +217,7 @@ public class CalculateWageWithHealthInsuranceTests
             {
                 Salary = 1350 + 331.36M,
                 TaxRateType = TaxBracketRateType.Primary,
-                HealthInsuranceSetup = new HealthInsuranceSetup<string> { HealthInsurancePercentage = 50.00M, HasHealthInsurance = true },
+                HealthInsuranceSetup = new HealthInsuranceSetup<string> { HealthInsurancePercentage = 50.00M },
             });
         Assert.Equal(1697.74M, calculatedSalary.Gross);
         Assert.Equal(1445.76M, calculatedSalary.Net);
@@ -238,11 +238,32 @@ public class CalculateWageWithHealthInsuranceTests
             {
                 Salary = 875,
                 TaxRateType = TaxBracketRateType.Primary,
-                HealthInsuranceSetup = new HealthInsuranceSetup<string> { HealthInsurancePercentage = 0.00M, HasHealthInsurance = true },
+                HealthInsuranceSetup = new HealthInsuranceSetup<string> { HealthInsurancePercentage = 0.00M },
             });
         Assert.Equal(875.00M, calculatedSalary.Gross);
-        Assert.Equal(742.33M, calculatedSalary.Net);
+        Assert.Equal(770.32M, calculatedSalary.Net);
         Assert.Equal(43.75M, calculatedSalary.Contribution);
-        Assert.Equal(60.92M, calculatedSalary.Tax);
+        Assert.Equal(60.93M, calculatedSalary.Tax);
+    }
+
+    /// <summary>
+    /// Tests the calculation from a base gross salary of 400 using the primary tax rate,
+    /// but has health insurance percentage of 0%
+    /// verifying correct net salary, contribution, and tax calculations.
+    /// </summary>
+    [Fact]
+    public void CalculatePaycheck_Primary400_50PercentageHealthInsurance()
+    {
+        var calculatedSalary = this.wageCalculator.CalculateFromGross(
+            new WageCalculationParameters<string>
+            {
+                Salary = 400,
+                TaxRateType = TaxBracketRateType.Primary,
+                HealthInsuranceSetup = new HealthInsuranceSetup<string> { HealthInsurancePercentage = 50.00M },
+            });
+        Assert.Equal(416.02M, calculatedSalary.Gross);
+        Assert.Equal(376.80M, calculatedSalary.Net);
+        Assert.Equal(20.80M, calculatedSalary.Contribution);
+        Assert.Equal(18.42M, calculatedSalary.Tax);
     }
 }

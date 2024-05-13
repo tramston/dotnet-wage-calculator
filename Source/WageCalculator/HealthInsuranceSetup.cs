@@ -13,10 +13,10 @@ public class HealthInsuranceSetup<T>
     public List<HealthInsuranceMember<T>> Members { get; set; } = new();
 
     /// <summary>
-    /// Gets or sets a value indicating whether health insurance is applicable.
+    /// Gets a value indicating whether health insurance is applicable.
     /// </summary>
     /// <value>True if has health insurance, otherwise false.</value>
-    public bool HasHealthInsurance { get; set; }
+    public bool HasHealthInsurance => this.HealthInsurancePercentage > 0;
 
     /// <summary>
     /// Gets or sets the percentage of health insurance coverage applied to the members.

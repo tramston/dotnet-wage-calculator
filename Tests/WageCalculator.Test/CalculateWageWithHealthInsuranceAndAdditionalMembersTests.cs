@@ -31,7 +31,6 @@ public class CalculateWageWithHealthInsuranceAndAdditionalMembersTests
                 HealthInsuranceSetup = new HealthInsuranceSetup<string>
                 {
                     HealthInsurancePercentage = 100.00M,
-                    HasHealthInsurance = true,
                     Members = new List<HealthInsuranceMember<string>>
                     {
                         new HealthInsuranceMember<string>()
@@ -62,7 +61,6 @@ public class CalculateWageWithHealthInsuranceAndAdditionalMembersTests
                 HealthInsuranceSetup = new HealthInsuranceSetup<string>
                 {
                     HealthInsurancePercentage = 100.00M,
-                    HasHealthInsurance = true,
                     Members = new List<HealthInsuranceMember<string>>
                     {
                         new HealthInsuranceMember<string>()
