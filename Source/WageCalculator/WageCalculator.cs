@@ -318,8 +318,9 @@ public class WageCalculator<T>
 
             var memberPrime = memberSchema.Prime * member.Members;
             totalPrime += memberPrime;
-            newNetValue -= memberPrime;
         }
+
+        newNetValue -= totalPrime;
 
         adjustedSalaryAfterHealthInsurance.Net = Math.Round(newNetValue, 2, MidpointRounding.ToZero);
 

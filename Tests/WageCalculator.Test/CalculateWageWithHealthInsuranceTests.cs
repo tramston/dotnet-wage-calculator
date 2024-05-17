@@ -262,8 +262,29 @@ public class CalculateWageWithHealthInsuranceTests
                 HealthInsuranceSetup = new HealthInsuranceSetup<string> { HealthInsurancePercentage = 50.00M },
             });
         Assert.Equal(416.02M, calculatedSalary.Gross);
-        Assert.Equal(376.80M, calculatedSalary.Net);
+        Assert.Equal(348.80M, calculatedSalary.Net);
         Assert.Equal(20.80M, calculatedSalary.Contribution);
         Assert.Equal(18.42M, calculatedSalary.Tax);
+    }
+
+    /// <summary>
+    /// Tests the calculation from a base gross salary of 192.98 using the primary tax rate,
+    /// but has health insurance percentage of 0%
+    /// verifying correct net salary, contribution, and tax calculations.
+    /// </summary>
+    [Fact]
+    public void CalculatePaycheck_Primary192_98_50PercentageHealthInsurance()
+    {
+        var calculatedSalary = this.wageCalculator.CalculateFromGross(
+            new WageCalculationParameters<string>
+            {
+                Salary = 192.98M,
+                TaxRateType = TaxBracketRateType.Secondary,
+                HealthInsuranceSetup = new HealthInsuranceSetup<string> { HealthInsurancePercentage = 50.00M },
+            });
+        Assert.Equal(209.36M, calculatedSalary.Gross);
+        Assert.Equal(151.00M, calculatedSalary.Net);
+        Assert.Equal(10.47M, calculatedSalary.Contribution);
+        Assert.Equal(19.89M, calculatedSalary.Tax);
     }
 }
