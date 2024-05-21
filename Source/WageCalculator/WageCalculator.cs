@@ -211,7 +211,7 @@ public class WageCalculator<T>
             {
                 Salary = prime *
                          (wageCalculationParameters.HealthInsuranceSetup.HealthInsurancePercentage / 100),
-                HasTaxes = true,
+                HasTaxes = wageCalculationParameters.HasTaxes,
                 TaxRateType = TaxBracketRateType.Secondary,
             });
 
@@ -243,7 +243,7 @@ public class WageCalculator<T>
                 {
                     Salary = prime *
                              ((100 - wageCalculationParameters.HealthInsuranceSetup.HealthInsurancePercentage) / 100),
-                    HasTaxes = true,
+                    HasTaxes = wageCalculationParameters.HasTaxes,
                     TaxRateType = TaxBracketRateType.Secondary,
                 });
             newNetValue = netBaseValue - calculatedHealthInsuranceForNet.Net;
@@ -350,86 +350,4 @@ public class WageCalculator<T>
 
         return this.CalculateAdjustedSalaryForGrossSalarySmallerThan450(wageCalculationParameters, grossBaseSalary, netValue);
     }
-
-    // /// <summary>
-    // /// Adjusts the calculated salary based on the health insurance contributions, recalculating gross and net salaries to include health insurance costs.
-    // /// </summary>
-    // /// <param name="wageCalculationParameters">The parameters including tax rate type, contribution percentage, whether taxes should be considered, health insurance details, and whether a tax breakdown should be provided.</param>
-    // /// <param name="grossBaseSalary">The gross base salary without health insurance. </param>
-    // /// <param name="contribution">The "precise contribution" of the grossBaseSalary. </param>
-    // /// <param name="tax">The "precise tax" of the grossBaseSalary. </param>
-    // /// <returns>A <see cref="CalculatedWage"/> object that includes adjustments for health insurance contributions.</returns>
-    // private CalculatedWage CalculateAdjustedSalaryWithHealthInsurance(WageCalculationParameters<T> wageCalculationParameters, decimal grossBaseSalary, decimal contribution, decimal tax)
-    // {
-    //     var prime = Math.Round(this.healthInsuranceSchema.Prime, 2, MidpointRounding.AwayFromZero);
-    //     var calculatedHealthInsuranceForGross = this.CalculateFromNet(
-    //         new WageCalculationParameters<T>
-    //         {
-    //             Salary = prime *
-    //                      (wageCalculationParameters.HealthInsuranceSetup.HealthInsurancePercentage / 100),
-    //             HasTaxes = true,
-    //             TaxRateType = TaxBracketRateType.Secondary,
-    //         });
-    //
-    //     var adjustedSalaryAfterHealthInsurance = this.CalculateFromGross(
-    //         new WageCalculationParameters<T>
-    //         {
-    //             Salary = calculatedHealthInsuranceForGross.Gross + grossBaseSalary,
-    //             HasTaxes = wageCalculationParameters.HasTaxes,
-    //             TaxBreakdown = wageCalculationParameters.TaxBreakdown,
-    //             ContributionPercentage = wageCalculationParameters.ContributionPercentage,
-    //             TaxRateType = wageCalculationParameters.TaxRateType,
-    //         });
-    //
-    //     var netBaseValue = grossBaseSalary - contribution - tax;
-    //     decimal newNetValue;
-    //
-    //     if (wageCalculationParameters.HealthInsuranceSetup.HealthInsurancePercentage == 100)
-    //     {
-    //         newNetValue = netBaseValue;
-    //     }
-    //     else if (wageCalculationParameters.HealthInsuranceSetup.HealthInsurancePercentage == 0)
-    //     {
-    //         newNetValue = netBaseValue - prime;
-    //     }
-    //     else
-    //     {
-    //         var calculatedHealthInsuranceForNet = this.CalculateFromNet(
-    //             new WageCalculationParameters<T>
-    //             {
-    //                 Salary = prime *
-    //                          ((100 - wageCalculationParameters.HealthInsuranceSetup.HealthInsurancePercentage) / 100),
-    //                 HasTaxes = true,
-    //                 TaxRateType = TaxBracketRateType.Secondary,
-    //             });
-    //         newNetValue = netBaseValue - calculatedHealthInsuranceForNet.Net;
-    //     }
-    //
-    //     var totalPrime = prime;
-    //     foreach (var member in wageCalculationParameters.HealthInsuranceSetup.Members)
-    //     {
-    //         var memberSchema =
-    //             this.healthInsuranceSchema.MembersSchema.FirstOrDefault(x => x.Id != null && x.Id.Equals(member.Id));
-    //         if (memberSchema == null)
-    //         {
-    //             continue;
-    //         }
-    //
-    //         var memberPrime = memberSchema.Prime * member.Members;
-    //         totalPrime += memberPrime;
-    //         newNetValue -= memberPrime;
-    //     }
-    //
-    //     adjustedSalaryAfterHealthInsurance.Net = Math.Round(newNetValue, 2, MidpointRounding.AwayFromZero);
-    //
-    //     adjustedSalaryAfterHealthInsurance.HealthInsurancePrime = prime;
-    //     var calculatedTax = adjustedSalaryAfterHealthInsurance.Gross - totalPrime -
-    //                 adjustedSalaryAfterHealthInsurance.Contribution - adjustedSalaryAfterHealthInsurance.Net;
-    //     if (calculatedTax != adjustedSalaryAfterHealthInsurance.Tax)
-    //     {
-    //         adjustedSalaryAfterHealthInsurance.Tax = calculatedTax;
-    //     }
-    //
-    //     return adjustedSalaryAfterHealthInsurance;
-    // }
 }
