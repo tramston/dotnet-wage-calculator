@@ -269,7 +269,11 @@ public class WageCalculator<T>
         adjustedSalaryAfterHealthInsurance.HealthInsurancePrime = prime;
         var calculatedTax = adjustedSalaryAfterHealthInsurance.Gross - totalPrime -
                             adjustedSalaryAfterHealthInsurance.Contribution - adjustedSalaryAfterHealthInsurance.Net;
-        if (calculatedTax != adjustedSalaryAfterHealthInsurance.Tax)
+        if (!wageCalculationParameters.HasTaxes)
+        {
+            adjustedSalaryAfterHealthInsurance.Tax = 0;
+        }
+        else if (calculatedTax != adjustedSalaryAfterHealthInsurance.Tax)
         {
             adjustedSalaryAfterHealthInsurance.Tax = calculatedTax;
         }
