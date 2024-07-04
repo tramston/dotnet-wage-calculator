@@ -4,15 +4,21 @@ namespace WageCalculator;
 /// Provides methods to calculate gross and net wages based on given tax brackets and contribution rates.
 /// </summary>
 /// <typeparam name="T">The type of the identifier used for the health insurance member.</typeparam>
-/// <remarks>
-/// Initializes a new instance of the <see cref="WageCalculator{T}"/> class with specified tax brackets and health insurance schema.
-/// </remarks>
-/// <param name="taxBrackets">A list of tax brackets used for wage calculations.</param>
-/// <param name="healthInsuranceSchema">The health insurance schema containing details about health insurance members.</param>
-public class WageCalculator<T>(List<TaxBracket> taxBrackets, HealthInsuranceSchema<T> healthInsuranceSchema)
+public class WageCalculator<T>
 {
-    private readonly List<TaxBracket> taxBrackets = taxBrackets;
-    private readonly HealthInsuranceSchema<T> healthInsuranceSchema = healthInsuranceSchema;
+    private readonly List<TaxBracket> taxBrackets;
+    private readonly HealthInsuranceSchema<T> healthInsuranceSchema;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WageCalculator{T}"/> class with specified tax brackets and health insurance schema.
+    /// </summary>
+    /// <param name="taxBrackets">A list of tax brackets used for wage calculations.</param>
+    /// <param name="healthInsuranceSchema">The health insurance schema containing details about health insurance members.</param>
+    public WageCalculator(List<TaxBracket> taxBrackets, HealthInsuranceSchema<T> healthInsuranceSchema)
+    {
+        this.taxBrackets = taxBrackets;
+        this.healthInsuranceSchema = healthInsuranceSchema;
+    }
 
     /// <summary>
     /// Calculates the gross wage from a given net salary considering specified tax and contribution details encapsulated in the <see cref="WageCalculationParameters{T}"/> object.
