@@ -16,5 +16,7 @@ public class HealthInsuranceSchema<T>
     /// Gets or sets a list of member schemas associated with the health insurance.
     /// </summary>
     /// <value>A list of <see cref="HealthInsuranceMemberSchema{T}"/> objects, where T is the type of the member schema ID.</value>
+#pragma warning disable IDE0028
     public List<HealthInsuranceMemberSchema<T>> MembersSchema { get; set; } = new();
+#pragma warning restore IDE0028
 }

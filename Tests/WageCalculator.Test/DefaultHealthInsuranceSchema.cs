@@ -8,10 +8,11 @@ public static class DefaultHealthInsuranceSchema
     /// <summary>
     /// Gets a default health insurance schema with predefined members and primes.
     /// </summary>
+    /// <param name="prime">Prime Value.</param>
     /// <returns>A <see cref="HealthInsuranceSchema{T}"/> where T is string, populated with default values.</returns>
-    public static HealthInsuranceSchema<string> GetSchema() => new()
+    public static HealthInsuranceSchema<string> GetSchema(decimal prime = 28.00M) => new()
     {
-        Prime = 28,
+        Prime = prime,
         MembersSchema = new List<HealthInsuranceMemberSchema<string>>
         {
             new HealthInsuranceMemberSchema<string> { Id = HealthInsuranceMemberTypes.PARENTS, Prime = 28.00M },

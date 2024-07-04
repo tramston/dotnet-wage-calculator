@@ -9,7 +9,9 @@ public class TaxBracket
     /// Gets or sets the list of tax rates applicable within this tax bracket.
     /// Each <see cref="TaxBracketRate"/> represents a different type of tax rate, such as primary or secondary.
     /// </summary>
+#pragma warning disable IDE0028
     public List<TaxBracketRate> Rates { get; set; } = new();
+#pragma warning restore IDE0028
 
     /// <summary>
     /// Gets or sets the income threshold for this tax bracket.

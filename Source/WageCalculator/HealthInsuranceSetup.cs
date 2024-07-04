@@ -10,7 +10,9 @@ public class HealthInsuranceSetup<T>
     /// Gets or sets the list of health insurance members.
     /// </summary>
     /// <value>A list of <see cref="HealthInsuranceMember{T}"/> that contains all members covered under the health insurance plan.</value>
+#pragma warning disable IDE0028
     public List<HealthInsuranceMember<T>> Members { get; set; } = new();
+#pragma warning restore IDE0028
 
     /// <summary>
     /// Gets a value indicating whether health insurance is applicable.

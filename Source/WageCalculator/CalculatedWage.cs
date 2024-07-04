@@ -46,5 +46,7 @@ public class CalculatedWage
     /// <summary>
     /// Gets or sets a list of <see cref="TaxBracketBreakDown"/> objects that provide a detailed breakdown of taxes applied at different income thresholds.
     /// </summary>
+#pragma warning disable IDE0028
     public List<TaxBracketBreakDown> BreakDown { get; set; } = new();
+#pragma warning restore IDE0028
 }
