@@ -1,5 +1,4 @@
-namespace WageCalculator;
-
+namespace WageCalculator.Models.Tax;
 /// <summary>
 /// Represents a tax bracket, which defines the tax rates applicable at different income levels up to a specified threshold.
 /// </summary>

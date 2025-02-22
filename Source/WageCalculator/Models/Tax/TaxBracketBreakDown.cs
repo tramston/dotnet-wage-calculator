@@ -1,4 +1,4 @@
-namespace WageCalculator;
+namespace WageCalculator.Models.Tax;
 
 /// <summary>
 /// Represents the detailed breakdown of taxes within specific income thresholds of a tax bracket.

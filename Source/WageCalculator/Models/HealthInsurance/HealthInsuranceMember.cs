@@ -1,10 +1,13 @@
-namespace WageCalculator;
+namespace WageCalculator.Models.HealthInsurance;
+
+using WageCalculator.Interfaces;
 
 /// <summary>
 /// Represents a member within a health insurance plan, identifying the member and tracking the number of dependents or associated individuals.
 /// </summary>
 /// <typeparam name="T">The type of the identifier used for the health insurance member.</typeparam>
 public class HealthInsuranceMember<T>
+    where T : class, IHealthInsuranceMember
 {
     /// <summary>
     /// Gets or sets the identifier for the health insurance member.

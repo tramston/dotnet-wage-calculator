@@ -1,10 +1,15 @@
-namespace WageCalculator;
+namespace WageCalculator.Models.Wage;
+
+using WageCalculator.Enums;
+using WageCalculator.Interfaces;
+using WageCalculator.Models.HealthInsurance;
 
 /// <summary>
 /// Encapsulates the parameters needed for calculating wages.
 /// </summary>
 /// <typeparam name="T">The type of the identifier used in the health insurance setup.</typeparam>
 public class WageCalculationParameters<T>
+     where T : class, IHealthInsuranceMember // I'm assuming you mean 'health insurance member' not 'setup'
 {
     /// <summary>
     /// Gets or sets the salary amount on which the calculation is based.

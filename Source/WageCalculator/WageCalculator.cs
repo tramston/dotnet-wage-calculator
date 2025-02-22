@@ -1,10 +1,17 @@
 namespace WageCalculator;
 
+using WageCalculator.Interfaces;
+using WageCalculator.Enums;
+using WageCalculator.Models.HealthInsurance;
+using WageCalculator.Models.Tax;
+using WageCalculator.Models.Wage;
+
 /// <summary>
 /// Provides methods to calculate gross and net wages based on given tax brackets and contribution rates.
 /// </summary>
 /// <typeparam name="T">The type of the identifier used for the health insurance member.</typeparam>
 public class WageCalculator<T>
+     where T : class, IHealthInsuranceMember
 {
     private readonly List<TaxBracket> taxBrackets;
     private readonly HealthInsuranceSchema<T> healthInsuranceSchema;

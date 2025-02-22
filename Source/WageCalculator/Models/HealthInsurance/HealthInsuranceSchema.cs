@@ -1,10 +1,13 @@
-namespace WageCalculator;
+namespace WageCalculator.Models.HealthInsurance;
+
+using WageCalculator.Interfaces;
 
 /// <summary>
 /// Represents the schema for a health insurance, including the prime amount and a list of members.
 /// </summary>
 /// <typeparam name="T">The type of the identifier used for the health insurance member.</typeparam>
 public class HealthInsuranceSchema<T>
+     where T : class, IHealthInsuranceMember
 {
     /// <summary>
     /// Gets or sets the prime, or primary monetary amount, associated with the health insurance.
