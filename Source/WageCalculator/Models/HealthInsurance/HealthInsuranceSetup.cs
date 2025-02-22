@@ -1,10 +1,13 @@
-namespace WageCalculator;
+namespace WageCalculator.Models.HealthInsurance;
+
+using WageCalculator.Interfaces;
 
 /// <summary>
 /// Represents the setup for health insurance, including a list of members and the overall health insurance coverage details.
 /// </summary>
 /// <typeparam name="T">The type of the identifier used for the health insurance member.</typeparam>
 public class HealthInsuranceSetup<T>
+     where T : class, IHealthInsuranceMember
 {
     /// <summary>
     /// Gets or sets the list of health insurance members.

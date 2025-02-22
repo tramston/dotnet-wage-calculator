@@ -1,5 +1,6 @@
 namespace WageCalculator.Test;
 
+using WageCalculator.Enums;
 using Xunit;
 
 /// <summary>

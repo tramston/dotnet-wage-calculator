@@ -1,5 +1,8 @@
 namespace WageCalculator.Test;
 
+using WageCalculator.Enums;
+using WageCalculator.Models.Tax;
+
 /// <summary>
 /// Provides a collection of predefined tax brackets for testing or initialization purposes.
 /// </summary>

@@ -1,4 +1,6 @@
-namespace WageCalculator;
+namespace WageCalculator.Models.Wage;
+
+using WageCalculator.Models.Tax;
 
 /// <summary>
 /// Represents the calculated results of a wage calculation, detailing gross and net amounts, contributions, taxes, and a breakdown of taxes by brackets.

@@ -1,4 +1,6 @@
-namespace WageCalculator;
+namespace WageCalculator.Models.Tax;
+
+using WageCalculator.Enums;
 
 /// <summary>
 /// Represents a specific tax rate within a tax bracket, detailing the percentage rate and the type of tax rate.

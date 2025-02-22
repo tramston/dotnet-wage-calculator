@@ -1,5 +1,7 @@
 namespace WageCalculator.Test;
 
+using WageCalculator.Enums;
+using WageCalculator.Models.HealthInsurance;
 using Xunit;
 
 /// <summary>

@@ -1,5 +1,7 @@
 namespace WageCalculator.Test;
 
+using WageCalculator.Models.HealthInsurance;
+
 /// <summary>
 /// Provides a default health insurance schema for demonstration or initial setup purposes.
 /// </summary>

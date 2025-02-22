@@ -1,4 +1,4 @@
-namespace WageCalculator;
+namespace WageCalculator.Enums;
 
 /// <summary>
 /// Defines the types of tax rates that can be applied to income within a tax bracket.
