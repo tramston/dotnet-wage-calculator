@@ -304,4 +304,31 @@ public class CalculateWageFromGrossTests
         Assert.Equal(85.71M, calculatedSalary.Contribution);
         Assert.Equal(140.66M, calculatedSalary.Tax);
     }
+
+    /// <summary>
+    /// Tests the calculation from a gross salary of 1714.29 using the primary tax rate,
+    /// verifying correct net salary, contribution, and tax calculations.
+    /// </summary>
+    [Fact]
+    public void CalculatePaycheck_Primary843_27()
+    {
+        var newWageCalculatorWith32Prime =
+            new WageCalculator<string>(DefaultTaxBrackets.GetNewList(), DefaultHealthInsuranceSchema.GetSchema(32));
+        var calculatedSalaryWithNewMethod = newWageCalculatorWith32Prime.CalculateFromGross(new WageCalculationParameters<string>
+        {
+            Salary = 843.27M,
+            TaxRateType = TaxBracketRateType.Primary,
+        });
+        Assert.Equal(750M, calculatedSalaryWithNewMethod.Net);
+        Assert.Equal(42.16M, calculatedSalaryWithNewMethod.Contribution);
+        Assert.Equal(51.11M, calculatedSalaryWithNewMethod.Tax);
+        var calculatedSalary = this.wageCalculator.CalculateFromGross(new WageCalculationParameters<string>
+        {
+            Salary = 843.27M,
+            TaxRateType = TaxBracketRateType.Primary,
+        });
+        Assert.Equal(743.20M, calculatedSalary.Net);
+        Assert.Equal(42.16M, calculatedSalary.Contribution);
+        Assert.Equal(57.91M, calculatedSalary.Tax);
+    }
 }

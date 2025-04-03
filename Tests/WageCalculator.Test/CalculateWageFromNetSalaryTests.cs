@@ -51,6 +51,65 @@ public class CalculateWageFromNetSalaryTests
     }
 
     /// <summary>
+    /// Tests the calculation from a net salary of 1000 using the secondary tax rate,
+    /// verifying correct net salary, contribution, and tax calculations.
+    /// </summary>
+    [Fact]
+    public void CalculatePaycheck_Secondary1169_59()
+    {
+        var newWageCalculatorWith32Prime =
+            new WageCalculator<string>(DefaultTaxBrackets.GetNewList(), DefaultHealthInsuranceSchema.GetSchema(32));
+
+        var calculatedSalaryWithNewMethod = newWageCalculatorWith32Prime.CalculateFromNet(new WageCalculationParameters<string>
+        {
+            Salary = 1000M,
+            TaxRateType = TaxBracketRateType.Secondary,
+        });
+        Assert.Equal(1169.59M, calculatedSalaryWithNewMethod.Gross);
+        Assert.Equal(58.48M, calculatedSalaryWithNewMethod.Contribution);
+        Assert.Equal(111.11M, calculatedSalaryWithNewMethod.Tax);
+
+        var calculatedSalary = this.wageCalculator.CalculateFromNet(new WageCalculationParameters<string>
+        {
+            Salary = 1000M,
+            TaxRateType = TaxBracketRateType.Secondary,
+        });
+        Assert.Equal(1169.59M, calculatedSalary.Gross);
+        Assert.Equal(58.48M, calculatedSalary.Contribution);
+        Assert.Equal(111.11M, calculatedSalary.Tax);
+    }
+
+    /// <summary>
+    /// Tests the calculation from a net salary of 1000 using the secondary tax rate,
+    /// verifying correct net salary, contribution, and tax calculations.
+    /// </summary>
+    [Fact]
+    public void CalculatePaycheck_Secondary_Via_1000Net()
+    {
+        var newWageCalculatorWith32Prime =
+            new WageCalculator<string>(DefaultTaxBrackets.GetNewList(), DefaultHealthInsuranceSchema.GetSchema(32));
+
+        var calculatedSalaryWithNewMethod = newWageCalculatorWith32Prime.CalculateFromNet(new WageCalculationParameters<string>
+        {
+            Salary = 1000M,
+            TaxRateType = TaxBracketRateType.Primary,
+            TaxBreakdown = true,
+        });
+        Assert.Equal(1135.67M, calculatedSalaryWithNewMethod.Gross);
+        Assert.Equal(56.78M, calculatedSalaryWithNewMethod.Contribution);
+        Assert.Equal(78.89M, calculatedSalaryWithNewMethod.Tax);
+
+        var calculatedSalary = this.wageCalculator.CalculateFromNet(new WageCalculationParameters<string>
+        {
+            Salary = 1000M,
+            TaxRateType = TaxBracketRateType.Primary,
+        });
+        Assert.Equal(1169.59M, calculatedSalary.Gross);
+        Assert.Equal(58.48M, calculatedSalary.Contribution);
+        Assert.Equal(111.11M, calculatedSalary.Tax);
+    }
+
+    /// <summary>
     /// Tests the calculation from a net salary of 80 using the primary tax rate,
     /// verifying correct net salary, contribution, and tax calculations.
     /// </summary>
