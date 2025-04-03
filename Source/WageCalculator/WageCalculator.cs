@@ -31,67 +31,65 @@ public class WageCalculator<T>
 
         var preciseTotalTax = 0m;
         decimal previousThreshold = 0;
-
+        var taxableSalary = wageCalculationParameters.Salary;
         var index = 0;
+
         foreach (var bracket in this.taxBrackets)
         {
-            var taxRate =
-                bracket.Rates.FirstOrDefault(x => x.RateType == wageCalculationParameters.TaxRateType)?.Rate ?? 0;
+            var taxRate = bracket.Rates
+                .FirstOrDefault(x => x.RateType == wageCalculationParameters.TaxRateType)?.Rate ?? 0;
+
             var currentThreshold = bracket.Threshold;
-            decimal a = 0;
-            decimal total = 0;
+            decimal incomeInBracket = 0;
+            decimal taxInBracket = 0;
+
             if (taxRate > 0)
             {
-                var c = (100 - (taxRate * 100)) / 100;
-                a = (wageCalculationParameters.Salary + preciseTotalTax - previousThreshold) / c;
-                a = Math.Max(
-                    Math.Min(a, currentThreshold == null ? a : (currentThreshold ?? wageCalculationParameters.Salary) - previousThreshold), 0);
-                total = a * taxRate;
+                var rateMultiplier = (100 - (taxRate * 100)) / 100; // 1 - taxRate
+                incomeInBracket = (wageCalculationParameters.Salary + preciseTotalTax - previousThreshold) / rateMultiplier;
+
+                incomeInBracket = Math.Max(
+                    0,
+                    Math.Min(
+                    incomeInBracket,
+                    currentThreshold.HasValue ? currentThreshold.Value - previousThreshold : incomeInBracket));
+
+                taxInBracket = incomeInBracket * taxRate;
             }
 
-            preciseTotalTax += total;
+            preciseTotalTax += taxInBracket;
 
             if (wageCalculationParameters.TaxBreakdown)
             {
-                if (bracket.Threshold == null)
+                calculatedSalary.BreakDown.Add(new TaxBracketBreakDown
                 {
-                    calculatedSalary.BreakDown.Add(new TaxBracketBreakDown
-                    {
-                        ThresholdFrom = this.taxBrackets[index - 1].Threshold,
-                        Tax = total,
-                    });
-                }
-                else
-                {
-                    calculatedSalary.BreakDown.Add(new TaxBracketBreakDown
-                    {
-                        ThresholdFrom = previousThreshold,
-                        ThresholdTo = currentThreshold,
-                        Tax = total,
-                    });
-                }
+                    ThresholdFrom = previousThreshold,
+                    ThresholdTo = currentThreshold,
+                    Tax = Math.Round(taxInBracket, 2),
+                });
             }
-
-            index++;
 
             if (!bracket.Threshold.HasValue)
             {
-                break; // Last bracket
+                break;
             }
 
-            previousThreshold = bracket.Threshold.Value;
+            previousThreshold = currentThreshold!.Value;
+            index++;
         }
 
         var totalTax = Math.Round(preciseTotalTax, 2, MidpointRounding.AwayFromZero);
-        var taxedSalary = wageCalculationParameters.Salary + totalTax;
+        var taxedSalary = wageCalculationParameters.Salary + preciseTotalTax;
 
-        var preciseContribution = taxedSalary / (1 - (wageCalculationParameters.ContributionPercentage / 100));
-        preciseContribution *= wageCalculationParameters.ContributionPercentage / 100;
+        // Contribution calculated using precise value first
+        var grossBeforeContribution = taxedSalary;
+        var contributionPercentage = wageCalculationParameters.ContributionPercentage / 100m;
+
+        var preciseGross = grossBeforeContribution / (1 - contributionPercentage);
+        var preciseContribution = preciseGross * contributionPercentage;
+
+        var gross = Math.Round(preciseGross, 2, MidpointRounding.AwayFromZero);
         var contribution = Math.Round(preciseContribution, 2, MidpointRounding.AwayFromZero);
-        var gross =
-            wageCalculationParameters.HasTaxes
-                ? Math.Round(taxedSalary + contribution, 2, MidpointRounding.AwayFromZero)
-                : taxedSalary;
 
         calculatedSalary.Gross = gross;
         calculatedSalary.Net = wageCalculationParameters.Salary;
@@ -118,13 +116,16 @@ public class WageCalculator<T>
         var preciseContribution = wageCalculationParameters.Salary * wageCalculationParameters.ContributionPercentage / 100;
         var contribution =
             Math.Round(preciseContribution, 2, MidpointRounding.AwayFromZero);
-        var taxedSalary = Math.Round(wageCalculationParameters.Salary - contribution, 2, MidpointRounding.AwayFromZero);
+
+        var taxedSalary = wageCalculationParameters.Salary - preciseContribution;
+
         var remainingSalary = taxedSalary;
         var preciseTotalTax = 0m;
         var totalTax = 0m;
         decimal previousThreshold = 0;
 
         var index = 0;
+
         foreach (var bracket in this.taxBrackets)
         {
             if (remainingSalary <= 0)
@@ -180,7 +181,7 @@ public class WageCalculator<T>
 
         var net = wageCalculationParameters.HasTaxes
             ? Math.Round(taxedSalary - totalTax, 2, MidpointRounding.AwayFromZero)
-            : taxedSalary;
+            : Math.Round(taxedSalary, 2, MidpointRounding.AwayFromZero);
 
         calculatedSalary.Gross = wageCalculationParameters.Salary;
         calculatedSalary.Net = net;
@@ -375,15 +376,10 @@ public class WageCalculator<T>
         adjustedSalaryAfterHealthInsurance.Net = Math.Round(newNetValue, 2, MidpointRounding.AwayFromZero);
 
         adjustedSalaryAfterHealthInsurance.HealthInsurancePrime = prime;
-        var calculatedTax = adjustedSalaryAfterHealthInsurance.Gross - totalPrime -
-                            adjustedSalaryAfterHealthInsurance.Contribution - adjustedSalaryAfterHealthInsurance.Net;
+
         if (!wageCalculationParameters.HasTaxes)
         {
             adjustedSalaryAfterHealthInsurance.Tax = 0;
-        }
-        else if (calculatedTax != adjustedSalaryAfterHealthInsurance.Tax)
-        {
-            adjustedSalaryAfterHealthInsurance.Tax = calculatedTax;
         }
 
         adjustedSalaryAfterHealthInsurance.HealthInsurancePercentage =
